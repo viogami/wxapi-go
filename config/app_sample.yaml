@@ -1,0 +1,10 @@
+server:
+  env: "dev"
+  address: "127.0.0.1"
+  port: 8000
+
+wx:
+  wxToken: "your-token"  # 与填写的服务器配置中的Token一致
+  AppID: "your-ID"
+  AppSecret: "your-secret"
+
