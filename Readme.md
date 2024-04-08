@@ -1,7 +1,5 @@
 # wxapi-go
-**本仓库只实现了最简单的公众号服务创建，以及调用chatgpt回复。API均取自官方文档，由于需求增加，并且有现成的golang开发的微信sdk库，不再造轮子。后续所有开发转移到[wxSDK](https://github.com/viogami/wxSDK)**
-
-**注意，业务模块中的menu.go文件中方法尚未实现,请参照[官方文档](https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Creating_Custom-Defined_Menu.html)**
+**本仓库实现了最简单的公众号服务创建，以及调用chatgpt回复。API均取自官方文档，由于需求增加，使用[wxSDK](https://github.com/viogami/wxSDK)辅助开发，只用编写业务逻辑**
 
 ## 介绍
 这是一个使用go语言搭建的微信公众号后端，使用gin框架。根路由，get进行验证，post进行回复消息. 主要实现了一个微信公众号后端的基本功能。
@@ -36,4 +34,9 @@
  解决方法： 在后端收到用户消息后必须回复`success`或者空字符串，才不会超时重传。避免超时无响应，可以在每次收到消息后回复自定义语句或者直接`success`，然后通过客服消息接口，主动将chatgpt的响应发送给用户。
 
  ----
-通过搭建公众号后端，深入理解了服务器之间的通信，了解了http，ws和webhook之间的区别和联系，也对gin框架有了更深的认识。
+
+ ## 注意
+ 微信公众号的后台设置中填写url会自动进行服务器端验证。希望实现的业务逻辑可以通过自建路由实现，如添加`/v1/menu`路由，使用get方式调用时，执行相关handle，实现添加菜单。
+
+ 注意专注公众号后台的接口权限，个人公众号只有极少量权限，甚至无法自定义菜单，不如直接在后台操作。
+
