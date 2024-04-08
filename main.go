@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"wxapi-go/auth"
 	"wxapi-go/config"
-	"wxapi-go/message"
-	"wxapi-go/util"
+	"wxapi-go/server"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,44 +22,20 @@ func main() {
 	if conf != nil {
 		port = fmt.Sprint(conf.Server.Port)
 		ginmode = conf.Server.Env
-		util.NewWxConfig(&conf.Wx)
+		auth.NewWxConfig(&conf.Wx)
 	} else {
-		log.Println("Error:config file is nil")
+		log.Fatalln("Error:config file is nil")
 	}
 
 	gin.SetMode(ginmode)
-	router := gin.Default()
 
-	router.GET("/", util.WXCheckSignature)
-	router.POST("/", message.WXMsgReceive)
+	r := server.SetupRoute()
+	err := r.Run(":" + port)
+	if err != nil {
+		log.Fatal("Server start failed...")
+	}
+	log.Println("Server start success... port:", port, " mode:", ginmode)
 
-	log.Fatalln(router.Run(":" + port))
-
-	// // 调用 GetAccessToken 获取 Access Token
-	// accessToken, ExpiresIn, err := util.GetAccessToken(appID, appSecret)
-	// if err != nil {
-	// 	log.Println("Error getting Access Token:", err)
-	// }
-	// util.Access_Token = accessToken //更新accessToken
-	// fmt.Println("Now the Access Token:", accessToken, " ExpiresIn:", ExpiresIn)
-
-	// // 启动一个定时任务，每隔 2 小时执行一次获取 Access Token 的操作
-	// ticker := time.NewTicker(2 * time.Hour)
-	// go func() {
-	// 	for {
-	// 		select {
-	// 		case <-ticker.C:
-	// 			// 调用 GetAccessToken 获取 Access Token
-	// 			accessToken, ExpiresIn, err := util.GetAccessToken(appID, appSecret)
-	// 			if err != nil {
-	// 				log.Println("Error getting Access Token:", err)
-	// 				continue
-	// 			}
-	// 			util.Access_Token = accessToken //更新accessToken
-	// 			fmt.Println("Now the Access Token:", accessToken, " ExpiresIn:", ExpiresIn)
-	// 		}
-	// 	}
-	// }()
-	// // 阻塞主程序，保持定时任务持续运行
-	// select {}
+	// 调用 StartAccessTokenScheduler 开始定时任务
+	auth.StartAccessTokenScheduler(conf.Wx.AppID, conf.Wx.AppSecret)
 }

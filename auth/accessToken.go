@@ -1,10 +1,12 @@
-package util
+package auth
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"time"
 )
 
 var Access_Token string //access_token全局变量
@@ -41,4 +43,22 @@ func GetAccessToken(appID, appSecret string) (string, int, error) {
 	}
 
 	return accessTokenResponse.AccessToken, accessTokenResponse.ExpiresIn, err
+}
+
+// 定时获取微信 Access Token
+func StartAccessTokenScheduler(appID, appSecret string) {
+	// 启动一个定时任务，每隔 2 小时执行一次获取 Access Token 的操作
+	ticker := time.NewTicker(2 * time.Hour)
+	defer ticker.Stop() // 停止定时器
+
+	for range ticker.C {
+		// 调用 GetAccessToken 获取 Access Token
+		accessToken, expiresIn, err := GetAccessToken(appID, appSecret)
+		if err != nil {
+			log.Println("Error getting Access Token:", err)
+			continue
+		}
+		Access_Token = accessToken // 更新 accessToken
+		log.Println("Now the Access Token:", accessToken, " ExpiresIn:", expiresIn)
+	}
 }

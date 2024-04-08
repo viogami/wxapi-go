@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-	"wxapi-go/util"
+	"wxapi-go/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +37,7 @@ func WXMsgReceive(c *gin.Context) {
 		simpleReply(c, textMsg.ToUserName, textMsg.FromUserName, "感谢你的关注,我是聊天bot:vio🥰使用Gpt3.5turbo的接口，发送消息即可对话。") // 关注后的默认回复
 
 	case "text":
-		GptReplyWXMsg(c, textMsg.ToUserName, textMsg.FromUserName, textMsg.Content, &util.Access_Token) // 调用gpt回复
+		GptReplyWXMsg(c, textMsg.ToUserName, textMsg.FromUserName, textMsg.Content, &auth.Access_Token) // 调用gpt回复
 
 	default:
 		simpleReply(c, textMsg.ToUserName, textMsg.FromUserName, "残念！这个消息类型我的开发者还没有进行相应的设置😭") // 关注后的默认回复
