@@ -1,4 +1,4 @@
-package message
+package oaHandle
 
 import (
 	"encoding/xml"
@@ -30,7 +30,7 @@ func WXMsgReceive(c *gin.Context) {
 		log.Printf("[消息接收] - XML数据包解析失败: %v\n", err)
 		return
 	}
-	//log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
+	log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
 
 	switch textMsg.MsgType {
 	case "event":
@@ -40,7 +40,7 @@ func WXMsgReceive(c *gin.Context) {
 		GptReplyWXMsg(c, textMsg.ToUserName, textMsg.FromUserName, textMsg.Content, &auth.Access_Token) // 调用gpt回复
 
 	default:
-		simpleReply(c, textMsg.ToUserName, textMsg.FromUserName, "残念！这个消息类型我的开发者还没有进行相应的设置😭") // 关注后的默认回复
+		simpleReply(c, textMsg.ToUserName, textMsg.FromUserName, "残念！这个消息类型我的开发者还没有进行相应的设置😭") // 未定义类型的回复
 	}
 }
 

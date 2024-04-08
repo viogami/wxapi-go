@@ -49,7 +49,7 @@ func WXCheckSignature(c *gin.Context) {
 
 	ok := CheckSignature(signature, timestamp, nonce, wxToken)
 	if !ok {
-		log.Println("微信公众号接入校验失败!")
+		log.Println("微信公众号签名检查失败!")
 		return
 	}
 
@@ -57,8 +57,8 @@ func WXCheckSignature(c *gin.Context) {
 	_, _ = c.Writer.WriteString(echostr)
 }
 
-func NewWxConfig(conf *config.WxConfig) {
-	wxToken = conf.WxToken
-	appID = conf.AppID
-	appSecret = conf.AppSecret
+func NewWxConfig(conf *config.Config) {
+	wxToken = conf.OfficialAccount.Token
+	appID = conf.OfficialAccount.AppID
+	appSecret = conf.OfficialAccount.AppSecret
 }

@@ -2,40 +2,28 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"wxapi-go/auth"
 	"wxapi-go/config"
 	"wxapi-go/server"
-
-	"github.com/gin-gonic/gin"
-)
-
-var (
-	port    string
-	ginmode string
 )
 
 func main() {
 	appConfig := flag.String("config", "config/app.yaml", "application config path")
-	conf, _ := config.ConfigParse(appConfig)
-	if conf != nil {
-		port = fmt.Sprint(conf.Server.Port)
-		ginmode = conf.Server.Env
-		auth.NewWxConfig(&conf.Wx)
-	} else {
-		log.Fatalln("Error:config file is nil")
-	}
-
-	gin.SetMode(ginmode)
-
-	r := server.SetupRoute()
-	err := r.Run(":" + port)
+	conf, err := config.ConfigParse(appConfig)
 	if err != nil {
-		log.Fatal("Server start failed...")
+		log.Fatalf("Failed to parse config: %v", err)
 	}
-	log.Println("Server start success... port:", port, " mode:", ginmode)
+
+	s, err := server.New(conf)
+	if err != nil {
+		log.Fatalf("Init server failed: %v", err)
+	}
+
+	if err := s.RunOA(); err != nil {
+		log.Fatalf("Run server failed: %v", err)
+	}
+	log.Println("Server start success... port:", conf.Server.Port, " mode:", conf.Server.Env)
 
 	// 调用 StartAccessTokenScheduler 开始定时任务
-	auth.StartAccessTokenScheduler(conf.Wx.AppID, conf.Wx.AppSecret)
+	//go auth.StartAccessTokenScheduler(conf.OfficialAccount.AppID, conf.OfficialAccount.AppSecret)
 }
