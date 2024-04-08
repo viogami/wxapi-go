@@ -1,4 +1,9 @@
 # wxapi-go
+**本仓库只实现了最简单的公众号服务创建，以及调用chatgpt回复。API均取自官方文档，由于需求增加，并且有现成的golang开发的微信sdk库，不再造轮子。后续所有开发转移到[wxSDK](https://github.com/viogami/wxSDK)**
+
+**注意，业务模块中的menu.go文件中方法尚未实现,请参照[官方文档](https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Creating_Custom-Defined_Menu.html)**
+
+## 介绍
 这是一个使用go语言搭建的微信公众号后端，使用gin框架。根路由，get进行验证，post进行回复消息. 主要实现了一个微信公众号后端的基本功能。
 
 完成了微信公众号的后端验证，并调用自建的chatgpt接口，可以实现公众号对用户消息基于chatgpt的回复。
